@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>42 Book Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0e0e0d;
+    --paper: #f4f1ea;
+    --accent: #c8432a;
+    --muted: #7a7668;
+    --rule: rgba(14,14,13,0.12);
+    --serif: 'Playfair Display', Georgia, serif;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    border-bottom: 1px solid var(--rule);
+    padding: 2rem 0 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .masthead {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .vol-line {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 2rem;
+  }
+
+  .club-number {
+    font-family: var(--serif);
+    font-size: clamp(7rem, 18vw, 14rem);
+    font-weight: 700;
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    display: block;
+    position: relative;
+  }
+
+  .club-number span {
+    color: var(--accent);
+  }
+
+  .club-tagline {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    color: var(--muted);
+    margin-top: 0.5rem;
+    padding-bottom: 2rem;
+    letter-spacing: 0.01em;
+  }
+
+  /* ── PRINCIPLES ── */
+  .principles-band {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 3.5rem 0;
+  }
+
+  .principles-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .band-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+
+  .principles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 2.5rem;
+  }
+
+  .principle-item {
+    border-top: 1px solid rgba(244,241,234,0.15);
+    padding-top: 1.25rem;
+  }
+
+  .principle-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .principle-title {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+    color: var(--paper);
+  }
+
+  .principle-desc {
+    font-size: 0.88rem;
+    color: rgba(244,241,234,0.6);
+    line-height: 1.6;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .section {
+    padding: 4rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .section-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  /* ── READING LIST ── */
+  .reading-list { display: flex; flex-direction: column; gap: 0; }
+
+  .book-row {
+    display: grid;
+    grid-template-columns: 120px 1fr auto;
+    align-items: start;
+    gap: 1.5rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .book-row.visible { opacity: 1; transform: translateY(0); }
+
+  .book-date {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    padding-top: 3px;
+  }
+
+  .book-title {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 3px;
+  }
+
+  .book-author {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .book-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 0.5rem;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    color: var(--muted);
+  }
+
+  .book-status {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    padding-top: 3px;
+    white-space: nowrap;
+  }
+
+  .status-done { color: var(--muted); }
+  .status-current { color: var(--accent); }
+  .status-next { color: var(--ink); opacity: 0.4; }
+
+  /* ── ABOUT ── */
+  .about-text {
+    font-family: var(--serif);
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    line-height: 1.8;
+    max-width: 680px;
+  }
+
+  .about-text em { color: var(--accent); font-style: italic; }
+
+  /* ── PULL QUOTE ── */
+  .pull-quote {
+    margin: 3rem 0;
+    padding: 2rem 0 2rem 2rem;
+    border-left: 3px solid var(--accent);
+  }
+
+  .pull-quote blockquote {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    line-height: 1.5;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+  }
+
+  .pull-quote cite {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-style: normal;
+    text-transform: uppercase;
+  }
+
+  /* ── NEXT BOOK SPOTLIGHT ── */
+  .spotlight {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 2.5rem;
+    border-radius: 2px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: end;
+    margin-top: 1rem;
+  }
+
+  .spotlight-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .spotlight-title {
+    font-family: var(--serif);
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.4rem;
+  }
+
+  .spotlight-author {
+    font-size: 0.9rem;
+    color: rgba(244,241,234,0.55);
+    margin-bottom: 1rem;
+  }
+
+  .spotlight-desc {
+    font-size: 0.9rem;
+    color: rgba(244,241,234,0.7);
+    line-height: 1.6;
+    max-width: 480px;
+  }
+
+  .spotlight-date {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  /* ── JOIN ── */
+  .join-section {
+    padding: 4rem 0 5rem;
+    text-align: center;
+  }
+
+  .join-headline {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .join-headline span { color: var(--accent); font-style: italic; }
+
+  .join-sub {
+    font-size: 1rem;
+    color: var(--muted);
+    max-width: 440px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .join-principles {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+
+  .join-chip {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .join-chip::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 1.5rem 0;
+  }
+
+  .footer-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-brand {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .footer-brand strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .footer-note {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── FOUNDERS ── */
+  .founders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2.5rem;
+  }
+
+  .founder-card {
+    border-top: 2px solid var(--accent);
+    padding-top: 1.5rem;
+  }
+
+  .founder-name {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 0.2rem;
+  }
+
+  .founder-role {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .founder-bio {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+
+  .founder-wechat {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 4px 10px;
+  }
+
+  .founder-wechat::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-animate { animation: fadeUp 0.8s ease both; }
+  .hero-animate-2 { animation: fadeUp 0.8s 0.15s ease both; }
+  .hero-animate-3 { animation: fadeUp 0.8s 0.3s ease both; }
+
+  @media (max-width: 600px) {
+    .book-row { grid-template-columns: 1fr; gap: 0.5rem; }
+    .spotlight { grid-template-columns: 1fr; }
+    .spotlight-date { text-align: left; }
+    .vol-line { flex-direction: column; align-items: flex-start; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="masthead">
+    <div class="vol-line hero-animate">
+      <span>Est. 2026 &nbsp;·&nbsp; Shanghai, China</span>
+      <span>Be aware. Be curious.</span>
+    </div>
+    <div class="club-number hero-animate-2"><span>42</span> Book Club</div>
+    <div class="club-tagline hero-animate-3">A reading society for those who think before they judge.</div>
+  </div>
+</header>
+
+<!-- PRINCIPLES -->
+<div class="principles-band">
+  <div class="principles-inner">
+    <div class="band-label">Three principles</div>
+    <div class="principles-grid">
+      <div class="principle-item">
+        <div class="principle-num">01</div>
+        <div class="principle-title">Understand before judging.</div>
+        <div class="principle-desc">We seek understanding before judgment. Every book, every idea deserves a fair hearing first.</div>
+      </div>
+      <div class="principle-item">
+        <div class="principle-num">02</div>
+        <div class="principle-title">Question ideas, not people.</div>
+        <div class="principle-desc">We examine assumptions and reasoning — not motives or identities. The argument, not the arguer.</div>
+      </div>
+      <div class="principle-item">
+        <div class="principle-num">03</div>
+        <div class="principle-title">Clarity over consensus.</div>
+        <div class="principle-desc">Our goal is clarity, not agreement. We leave with sharper thinking, not necessarily the same conclusions.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ABOUT -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label">About</span>
+      <div class="section-rule"></div>
+    </div>
+    <p class="about-text">
+      42 Book Club is a small, curious group that meets to read science fiction and speculative literature — books that ask the questions most people avoid. We named ourselves after the answer to life, the universe, and everything, because we believe <em>the quality of the question matters more than the answer</em>.
+    </p>
+    <div class="pull-quote">
+      <blockquote>"The answer to the great question of life, the universe, and everything is… forty-two."</blockquote>
+      <cite>Douglas Adams, The Hitchhiker's Guide to the Galaxy</cite>
+    </div>
+    <p class="about-text">
+      We read broadly — from Asimov's logical robots to Adams' absurdist cosmos — and meet monthly to discuss not just the book, but the ideas it surfaces. No expertise required. Only curiosity.
+    </p>
+  </div>
+
+  <!-- READING LIST -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label">Reading list</span>
+      <div class="section-rule"></div>
+    </div>
+    <div class="reading-list" id="bookList">
+      <div class="book-row">
+        <div class="book-date">Feb 8, 2026</div>
+        <div>
+          <div class="book-title">I, Robot</div>
+          <div class="book-author">Isaac Asimov</div>
+          <div class="book-tags">
+            <span class="tag">robot ethics</span>
+            <span class="tag">logic</span>
+            <span class="tag">short stories</span>
+          </div>
+        </div>
+        <div class="book-status status-done">Read ✓</div>
+      </div>
+      <div class="book-row">
+        <div class="book-date">Mar 29, 2026</div>
+        <div>
+          <div class="book-title">The Hitchhiker's Guide to the Galaxy</div>
+          <div class="book-author">Douglas Adams</div>
+          <div class="book-tags">
+            <span class="tag">absurdism</span>
+            <span class="tag">cosmic humor</span>
+            <span class="tag">philosophy</span>
+          </div>
+        </div>
+        <div class="book-status status-done">Read ✓</div>
+      </div>
+      <div class="book-row">
+        <div class="book-date">May 24, 2026</div>
+        <div>
+          <div class="book-title">Flowers for Algernon</div>
+          <div class="book-author">Daniel Keyes</div>
+          <div class="book-tags">
+            <span class="tag">intelligence</span>
+            <span class="tag">ethics</span>
+            <span class="tag">identity</span>
+          </div>
+        </div>
+        <div class="book-status status-done">Read ✓</div>
+      </div>
+      <div class="book-row">
+        <div class="book-date">Jun 21, 2026</div>
+        <div>
+          <div class="book-title">Do Androids Dream of Electric Sheep?</div>
+          <div class="book-author">Philip K. Dick</div>
+          <div class="book-tags">
+            <span class="tag">consciousness</span>
+            <span class="tag">empathy</span>
+            <span class="tag">identity</span>
+          </div>
+        </div>
+        <div class="book-status status-done">Read ✓</div>
+      </div>
+      <div class="book-row">
+        <div class="book-date">Aug 9, 2026</div>
+        <div>
+          <div class="book-title">Story of Your Life</div>
+          <div class="book-author">Ted Chiang</div>
+          <div class="book-tags">
+            <span class="tag">language</span>
+            <span class="tag">time</span>
+            <span class="tag">free will</span>
+          </div>
+        </div>
+        <div class="book-status status-current">Current</div>
+      </div>
+    </div>
+
+    <!-- NEXT BOOK SPOTLIGHT -->
+    <div class="spotlight">
+      <div>
+        <div class="spotlight-label">Current read — Book V</div>
+        <div class="spotlight-title">Story of Your Life</div>
+        <div class="spotlight-author">Ted Chiang · Inspiration for the film Arrival</div>
+        <div class="spotlight-desc">A linguist learning an alien language begins to perceive time the way the aliens do — all at once, rather than moment by moment. A meditation on language, determinism, and whether knowing the future would change how you choose to live it.</div>
+      </div>
+      <div class="spotlight-date">Aug 9, 2026<br>5–7 pm<br>Koala Bar & Cafe</div>
+    </div>
+  </div>
+
+  <!-- JOIN -->
+  <div class="join-section">
+    <div class="join-headline">Ready to read<br><span>differently?</span></div>
+    <p class="join-sub">We meet monthly, take turns proposing books, and always leave with more questions than answers. That's the point.</p>
+    <div class="join-principles">
+      <span class="join-chip">Understand first</span>
+      <span class="join-chip">Question ideas</span>
+      <span class="join-chip">Seek clarity</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOUNDERS -->
+<div class="main">
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label">Founders</span>
+      <div class="section-rule"></div>
+    </div>
+    <div class="founders-grid">
+
+      <div class="founder-card">
+        <div class="founder-name">Jessie Guo</div>
+        <div class="founder-role">Head of Global Marketing Strategy · Springer Nature</div>
+        <p class="founder-bio">With over a decade of experience in academic publishing, Jessie previously worked as a book editor and has published more than 200 engineering and technology titles. She is passionate about connecting ideas, disciplines, and people through books. Through the 42 Book Club, she hopes to create a space where curious minds can explore big questions together.</p>
+        <span class="founder-wechat">WeChat &nbsp;·&nbsp; huijie157931</span>
+      </div>
+
+      <div class="founder-card">
+        <div class="founder-name">Eva Guttmann-Flury, PhD</div>
+        <div class="founder-role">Computational Neuroscientist · SJTU &amp; Westlake University</div>
+        <p class="founder-bio">A postdoctoral researcher at Shanghai Jiao Tong University and visiting researcher at Westlake University, Eva's research focuses on brain–computer interfaces and multimodal neuroimaging to better understand brain function and neurological diseases. Through the 42 Book Club, Eva enjoys bringing together science, literature, and philosophy to spark thoughtful conversations and curiosity.</p>
+        <span class="founder-wechat">WeChat &nbsp;·&nbsp; QinXinlanEva</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand"><strong>42 Book Club</strong> &nbsp;·&nbsp; Be aware. Be curious.</div>
+    <div class="footer-note">Shanghai, China &nbsp;·&nbsp; Est. 2026</div>
+  </div>
+</footer>
+
+<script>
+  const rows = document.querySelectorAll('.book-row');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 120);
+      }
+    });
+  }, { threshold: 0.1 });
+  rows.forEach(r => observer.observe(r));
+</script>
+
+</body>
+</html>
